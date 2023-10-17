@@ -22,7 +22,6 @@ void Space::removeStaticActor(Actor* actor) {
 	staticActors.remove(actor);
 }
 
-
 void Space::update() {
 	for (auto const& actor : dynamicActors) {
 		actor->vy = actor->vy + gravity;
@@ -43,7 +42,6 @@ void Space::update() {
         updateMoveDown(actor);
 	}
 }
-
 
 void Space::updateMoveRight(Actor* dynamicAct) {
     if (dynamicAct->vx > 0) { //velocidad a la derecha
@@ -82,7 +80,6 @@ void Space::updateMoveRight(Actor* dynamicAct) {
     }
 }
 
-
 void Space::updateMoveLeft(Actor* dynamicAct) {
     if (dynamicAct->vx < 0) {
         // El mejor "idealmente" vx partimos de ese
@@ -120,7 +117,6 @@ void Space::updateMoveLeft(Actor* dynamicAct) {
         dynamicAct->vx = possibleMovement;
     }
 }
-
 
 void Space::updateMoveDown(Actor* dynamicAct) {
     if (dynamicAct->vy > 0) {
@@ -169,7 +165,6 @@ void Space::updateMoveDown(Actor* dynamicAct) {
     }
 }
 
-
 void Space::updateMoveTop(Actor* dynamicAct) {
     if (dynamicAct->vy < 0) {
         int possibleMovement = dynamicAct->vy;
@@ -207,5 +202,3 @@ void Space::updateMoveTop(Actor* dynamicAct) {
         dynamicAct->vy = possibleMovement;
     }
 }
-
-

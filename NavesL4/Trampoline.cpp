@@ -19,15 +19,6 @@ void Trampoline::update() {
 	// Actualizar la animación
 	bool endAnimation = animation->update();
 
-	// Acabo la animación, no sabemos cual
-	//if (endAnimation) {
-	//	// Estaba saltando
-	//	if (state == game->stateMoving) {
-	//		cout << "SALTA" << endl;
-	//		state = game->stateDying;
-	//	}
-	//}
-
 	if (state == game->stateMoving) {
 		animation = aMoving;
 		cout << "MOVIMIENTO" << endl;
@@ -41,8 +32,8 @@ void Trampoline::update() {
 }
 
 
-void Trampoline::draw(float scrollX) {
-	animation->draw(x - scrollX, y);
+void Trampoline::draw(float scrollX, float scrollY) {
+	animation->draw(x - scrollX, y - scrollY);
 }
 
 void Trampoline::impacted() {

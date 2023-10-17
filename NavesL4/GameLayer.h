@@ -45,6 +45,7 @@ public:
 
 	Space* space;
 	float scrollX;
+	float scrollY;
 	int mapWidth;
 
 	list<Tile*> tiles; //donde estarán los suelos y muros

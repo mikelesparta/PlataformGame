@@ -17,6 +17,8 @@ void GameLayer::init() {
 
 	space = new Space(1);
 	scrollX = 0;
+	scrollY = 0;
+
 	tiles.clear(); // Vaciar por si reiniciamos el juego
 
 	audioBackground = new Audio("res/musica_ambiente.mp3", true);
@@ -223,7 +225,7 @@ void GameLayer::update() {
 	for (auto const& projectile : projectiles) {
 		//Si la velocidad es 0 lo quitamos, ya que ha chocado con un objeto
 		//Cutre lo más optimo es ver si el proyectil choca por la izquierda o la derecha
-		if (projectile->isInRender(scrollX) == false || projectile->vx == 0) {
+		if (projectile->isInRender(scrollX, scrollY) == false || projectile->vx == 0) {
 
 			bool pInList = std::find(deleteProjectiles.begin(),
 				deleteProjectiles.end(),
@@ -294,16 +296,28 @@ void GameLayer::update() {
 
 void GameLayer::calculateScroll() {
 	//Le damos un margen para que se actualice el mapa
-	// limite izquierda
+	// Límite izquierda
 	if (player->x > WIDTH * 0.3) {
 		if (player->x - scrollX < WIDTH * 0.3) {
 			scrollX = player->x - WIDTH * 0.3;
 		}
 	}
-	// limite derecha
+	// Límite derecha
 	if (player->x < mapWidth - WIDTH * 0.3) {
 		if (player->x - scrollX > WIDTH * 0.7) {
 			scrollX = player->x - WIDTH * 0.7;
+		}
+	}
+	// Límite arriba
+	if (player->y > HEIGHT * 0.1) {
+		if (player->y - scrollY < HEIGHT * 0.1) {
+			scrollY = player->y - HEIGHT * 0.1;
+		}
+	}
+	// Límite abajo
+	if (player->y < mapWidth - HEIGHT * 0.3) {
+		if (player->y - scrollY > HEIGHT * 0.7) {
+			scrollY = player->y - HEIGHT * 0.7;
 		}
 	}
 }
@@ -314,26 +328,26 @@ void GameLayer::draw() {
 	background->draw();
 
 	for (auto const& tile : tiles) {
-		tile->draw(scrollX);
+		tile->draw(scrollX, scrollY);
 	}
 
 	for (auto const& projectile : projectiles) {
-		projectile->draw(scrollX);
+		projectile->draw(scrollX, scrollY);
 	}
 
-	cup->draw(scrollX);
-	player->draw(scrollX);
+	cup->draw(scrollX, scrollY);
+	player->draw(scrollX, scrollY);
 
 	for (auto const& enemy : enemies) {
-		enemy->draw(scrollX);
+		enemy->draw(scrollX, scrollY);
 	}
 
 	for (auto const& collectable : collectables) {
-		collectable->draw(scrollX);
+		collectable->draw(scrollX, scrollY);
 	}
 
 	for (auto const& trampoline : trampolines) {
-		trampoline->draw(scrollX);
+		trampoline->draw(scrollX, scrollY);
 	}
 
 	//Set-up displays no se mueven con el scroll
@@ -342,8 +356,7 @@ void GameLayer::draw() {
 	textPoints->draw();
 	textCollectables->draw();
 
-	// HUD
-	// NO tienen scroll, posición fija
+	// HUD - NO tienen scroll, posición fija
 	if (game->input == game->inputMouse) {
 		buttonJump->draw();
 		buttonShoot->draw();

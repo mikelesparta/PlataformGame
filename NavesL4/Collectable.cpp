@@ -28,8 +28,8 @@ void Collectable::update() {
 }
 
 
-void Collectable::draw(float scrollX) {
-	animation->draw(x - scrollX, y);
+void Collectable::draw(float scrollX, float scrollY) {
+	animation->draw(x - scrollX, y-scrollY);
 }
 
 void Collectable::impacted() {

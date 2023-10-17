@@ -16,7 +16,7 @@ public:
 
 	void moveX(float axis);
 	void moveY(float axis);
-	void draw(float scrollX = 0) override; // Va a sobrescribir
+	void draw(float scrollX = 0, float scrollY = 0) override; // Va a sobrescribir
 	void loseLife();
 
 	int lifes = 3;

@@ -119,6 +119,12 @@ void Player::jump() {
 	}
 }
 
+void Player::jumpTrampoline() {
+	if (!onAir) {
+		vy = -23;
+		onAir = true;
+	}
+}
 Projectile* Player::shoot() {
 
 	if (shootTime == 0) {

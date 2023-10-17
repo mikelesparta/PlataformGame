@@ -39,6 +39,7 @@ void GameLayer::init() {
 	enemies.clear(); 
 	projectiles.clear(); 
 	collectables.clear();
+	trampolines.clear();
 
 	loadMap("res/" + to_string(game->currentLevel) + ".txt"); //cargamos el mapa
 }
@@ -104,6 +105,8 @@ void GameLayer::processControls() {
 }
 
 void GameLayer::update() {
+	list<Enemy*> deleteEnemies;
+	list<Projectile*> deleteProjectiles;
 	list<Collectable*> deleteCollectables;
 
 	if (pause) {
@@ -146,6 +149,10 @@ void GameLayer::update() {
 		collectable->update();
 	}
 
+	for (auto const& trampoline : trampolines) {
+		trampoline->update();
+	}
+
 	// Colisones: PLAYER - COLLECTABLE
 	for (auto const& collectable : collectables) {
 		if (player->isOverlap(collectable) && collectable->received == false) { 
@@ -166,6 +173,25 @@ void GameLayer::update() {
 		}
 	}
 
+
+	// Colisiones: PLAYER - TRAMPOLINE
+	for (auto const& trampoline : trampolines) {
+		if (player->isOverlap(trampoline)) {
+			int bajoPlayer = player->y + player->height / 2;
+			int trampolineAlto = trampoline->y - trampoline->height / 2;
+			cout << trampoline->state << endl;
+		
+			if (bajoPlayer >= trampoline->y) {
+				player->jumpTrampoline();
+				trampoline->impacted();
+				cout << trampoline->state << endl;
+			}
+
+		}
+	}
+
+
+
 	// Colisiones: PLAYER - ENEMY
 	for (auto const& enemy : enemies) {
 		if (player->isOverlap(enemy)) {
@@ -177,29 +203,23 @@ void GameLayer::update() {
 
 				if (bajoPlayer >= enemy->y) {
 					player->loseLife();
-
+					cout << "VIDAS" << endl;
+					cout << player->lifes << endl;
 				}
 				else {
 					enemy->impacted();
+					player->vy = -5;
 				}
-
-
-				cout << "VIDAS" << endl;
-				cout << player->lifes << endl;
-
 			}
 
 			if (player->lifes <= 0) {
 				init();
 				return;
 			}
-		}
-		
+		}		
 	}
 
 	// Colisiones: ENEMY - PROJECTILE
-	list<Enemy*> deleteEnemies;
-	list<Projectile*> deleteProjectiles;
 	for (auto const& projectile : projectiles) {
 		//Si la velocidad es 0 lo quitamos, ya que ha chocado con un objeto
 		//Cutre lo más optimo es ver si el proyectil choca por la izquierda o la derecha
@@ -310,6 +330,10 @@ void GameLayer::draw() {
 
 	for (auto const& collectable : collectables) {
 		collectable->draw(scrollX);
+	}
+
+	for (auto const& trampoline : trampolines) {
+		trampoline->draw(scrollX);
 	}
 
 	//Set-up displays no se mueven con el scroll
@@ -485,6 +509,17 @@ void GameLayer::loadMapObject(char character, float x, float y)
 		collectable->y = collectable->y - collectable->height / 2;
 		collectables.push_back(collectable);
 		space->addDynamicActor(collectable);
+		break;
+	}
+	case 'Y': {
+		//Primero añadir tile
+		loadMapObject('.', x, y);
+
+		Trampoline* trampoline = new Trampoline(x, y, game);
+		// modificación para empezar a contar desde el suelo.
+		trampoline->y = trampoline->y - trampoline->height / 2;
+		trampolines.push_back(trampoline);
+		space->addDynamicActor(trampoline);
 		break;
 	}
 	}

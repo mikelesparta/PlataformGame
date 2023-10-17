@@ -11,6 +11,7 @@
 #include "Space.h"
 #include "Pad.h"
 #include "Collectable.h"
+#include "Trampoline.h"
 
 #include <list>
 #include <fstream> // Leer ficheros
@@ -60,6 +61,7 @@ public:
 	list<Enemy*> enemies;
 	list<Projectile*> projectiles;
 	list<Collectable*> collectables;
+	list<Trampoline*> trampolines;
 
 	Tile* cup; // Elemento de final de nivel
 

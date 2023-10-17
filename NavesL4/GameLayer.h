@@ -10,6 +10,7 @@
 #include "Audio.h"
 #include "Space.h"
 #include "Pad.h"
+#include "Collectable.h"
 
 #include <list>
 #include <fstream> // Leer ficheros
@@ -48,13 +49,17 @@ public:
 	list<Tile*> tiles; //donde estarán los suelos y muros
 	Audio* audioBackground;
 	Text* textPoints;
+	Text* textCollectables;
 	int points;
+	int pointsCollectables;
 	int newEnemyTime = 0;
 	Player* player;
 	Background* background;
 	Actor* backgroundPoints;
+	Actor* backgroundCollectables;
 	list<Enemy*> enemies;
 	list<Projectile*> projectiles;
+	list<Collectable*> collectables;
 
 	Tile* cup; // Elemento de final de nivel
 

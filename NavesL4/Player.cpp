@@ -27,7 +27,11 @@ Player::Player(float x, float y, Game* game)
 }
 
 void Player::update() {
-	//Comrobar si la animación acabó
+	if (invulnerableTime > 0) {
+		invulnerableTime--;
+	}
+
+	//Comprobar si la animación acabó
 	bool endAnimation = animation->update();
 
 	if (collisionDown == true) {
@@ -90,7 +94,14 @@ void Player::update() {
 }
 
 void Player::draw(float scrollX) {
-	animation->draw(x - scrollX, y);
+	if (invulnerableTime == 0) {
+		animation->draw(x - scrollX, y);
+	}
+	else {
+		if (invulnerableTime % 10 >= 0 && invulnerableTime % 10 <= 5) {
+			animation->draw(x - scrollX, y);
+		}
+	}
 }
 
 void Player::moveX(float axis) {
@@ -131,3 +142,13 @@ Projectile* Player::shoot() {
 		return NULL;
 	}
 }
+
+void Player::loseLife() {
+	if (invulnerableTime <= 0) {
+		if (lifes > 0) {
+			lifes--;
+			invulnerableTime = 100;	// 100 actualizaciones 
+		}
+	}
+}
+

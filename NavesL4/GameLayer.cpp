@@ -23,15 +23,22 @@ void GameLayer::init() {
 	audioBackground->play();
 
 	points = 0;
-	textPoints = new Text("points", WIDTH * 0.92, HEIGHT * 0.04, game);
+	textPoints = new Text("points", WIDTH * 0.92, HEIGHT * 0.05, game);
 	textPoints->content = to_string(points);
+
+	pointsCollectables = 0;
+	textCollectables = new Text("collectables", WIDTH * 0.8, HEIGHT * 0.05, game);
+	textCollectables->content = to_string(pointsCollectables);
 
 	background = new Background("res/fondo_2.png", WIDTH * 0.5, HEIGHT * 0.5, -1, game);
 	backgroundPoints = new Actor("res/icono_puntos.png",
 		WIDTH * 0.85, HEIGHT * 0.05, 24, 24, game);
+	backgroundCollectables = new Actor("res/icono_recolectable_mini.png",
+		WIDTH * 0.75, HEIGHT * 0.05, 24, 24, game);
 
 	enemies.clear(); 
 	projectiles.clear(); 
+	collectables.clear();
 
 	loadMap("res/" + to_string(game->currentLevel) + ".txt"); //cargamos el mapa
 }
@@ -97,6 +104,8 @@ void GameLayer::processControls() {
 }
 
 void GameLayer::update() {
+	list<Collectable*> deleteCollectables;
+
 	if (pause) {
 		return;
 	}
@@ -133,15 +142,62 @@ void GameLayer::update() {
 		projectile->update();
 	}
 
-	// Colisiones
-	for (auto const& enemy : enemies) {
-		if (player->isOverlap(enemy)) {
-			init();
-			return; // Cortar el for
+	for (auto const& collectable : collectables) {
+		collectable->update();
+	}
+
+	// Colisones: PLAYER - COLLECTABLE
+	for (auto const& collectable : collectables) {
+		if (player->isOverlap(collectable) && collectable->received == false) { 
+			cout << "Obtenido una recolectable" << endl;
+
+			bool pInList = std::find(deleteCollectables.begin(),
+				deleteCollectables.end(),
+				collectable) != deleteCollectables.end();
+
+			if (!pInList) {
+				deleteCollectables.push_back(collectable);
+			}
+				
+			collectable->state = game->stateDead;
+			collectable->received = true;
+			pointsCollectables++; //Actualizamos el contador de monedas
+			textCollectables->content = to_string(pointsCollectables);
 		}
 	}
 
-	// Colisiones , Enemy - Projectile
+	// Colisiones: PLAYER - ENEMY
+	for (auto const& enemy : enemies) {
+		if (player->isOverlap(enemy)) {
+
+			//DISTINTO DE MURIENDO Y MUERTO
+			if (enemy->state != game->stateDying && enemy->state != game->stateDead) {
+				int bajoPlayer = player->y + player->height / 2;
+				int enemyAlto = enemy->y - enemy->height / 2;
+
+				if (bajoPlayer >= enemy->y) {
+					player->loseLife();
+
+				}
+				else {
+					enemy->impacted();
+				}
+
+
+				cout << "VIDAS" << endl;
+				cout << player->lifes << endl;
+
+			}
+
+			if (player->lifes <= 0) {
+				init();
+				return;
+			}
+		}
+		
+	}
+
+	// Colisiones: ENEMY - PROJECTILE
 	list<Enemy*> deleteEnemies;
 	list<Projectile*> deleteProjectiles;
 	for (auto const& projectile : projectiles) {
@@ -208,7 +264,12 @@ void GameLayer::update() {
 	}
 
 	deleteProjectiles.clear();
-	//cout << "update GameLayer" << endl;
+
+	for (auto const& collectable : deleteCollectables) {
+		collectables.remove(collectable);
+	}
+
+	deleteCollectables.clear();
 }
 
 void GameLayer::calculateScroll() {
@@ -247,9 +308,15 @@ void GameLayer::draw() {
 		enemy->draw(scrollX);
 	}
 
+	for (auto const& collectable : collectables) {
+		collectable->draw(scrollX);
+	}
+
 	//Set-up displays no se mueven con el scroll
 	backgroundPoints->draw();
+	backgroundCollectables->draw();
 	textPoints->draw();
+	textCollectables->draw();
 
 	// HUD
 	// NO tienen scroll, posición fija
@@ -402,10 +469,22 @@ void GameLayer::loadMapObject(char character, float x, float y)
 	}
 	case '#': { //Creamos tile
 		Tile* tile = new Tile("res/bloque_tierra.png", x, y, game);
-		// modificación para empezar a contar desde el suelo.
+		
+		// Modificación para empezar a contar desde el suelo.
 		tile->y = tile->y - tile->height / 2;
 		tiles.push_back(tile);
 		space->addStaticActor(tile);
+		break;
+	}
+	case 'R': {
+		//Primero añadir tile
+		loadMapObject('.', x, y);
+
+		Collectable* collectable = new Collectable(x, y, game);
+		// modificación para empezar a contar desde el suelo.
+		collectable->y = collectable->y - collectable->height / 2;
+		collectables.push_back(collectable);
+		space->addDynamicActor(collectable);
 		break;
 	}
 	}

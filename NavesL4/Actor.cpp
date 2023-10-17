@@ -9,10 +9,12 @@ Actor::Actor(string filename, float x, float y, int width, int height, Game* gam
 	texture = game->getTexture(filename);
 	this->x = x;
 	this->y = y;
-	// lo que mide el fichero
+
+	// Lo que mide el fichero
 	this->fileWidth = width;
 	this->fileHeight = height;
-	// lo que va a medir en el juego
+	
+	// Lo que va a medir en el juego
 	this->width = width;
 	this->height = height;
 }
@@ -68,5 +70,3 @@ bool Actor::containsPoint(int pointX, int pointY) {
 	}
 	return false;
 }
-
-

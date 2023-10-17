@@ -24,13 +24,9 @@ void Enemy::update() {
 
 	// Acabo la animación, no sabemos cual
 	if (endAnimation) {
-		cout << "ACABO ANIMACION" << endl;
-		cout << endAnimation << endl;
-
 		// Estaba muriendo
 		if (state == game->stateDying) {
 			state = game->stateDead;
-			cout << "MUERE HOSTIAA" << endl;
 		}
 	}
 

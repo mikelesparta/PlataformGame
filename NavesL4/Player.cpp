@@ -158,3 +158,8 @@ void Player::loseLife() {
 	}
 }
 
+void Player::teletransport() {
+	cout << "Teletransport..." << endl;
+}
+
+

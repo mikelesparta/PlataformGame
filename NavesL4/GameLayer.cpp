@@ -42,6 +42,7 @@ void GameLayer::init() {
 	projectiles.clear(); 
 	collectables.clear();
 	trampolines.clear();
+	doors.clear();
 
 	loadMap("res/" + to_string(game->currentLevel) + ".txt"); //cargamos el mapa
 }
@@ -131,7 +132,7 @@ void GameLayer::update() {
 
 	// Jugador se cae
 	if (player->y > HEIGHT + 80) {
-		cout << "Caiste" << endl;
+		cout << "CAISTE" << endl;
 		init();
 	}
 
@@ -155,10 +156,14 @@ void GameLayer::update() {
 		trampoline->update();
 	}
 
+	for (auto const& door : doors) {
+		door->update();
+	}
+
 	// Colisones: PLAYER - COLLECTABLE
 	for (auto const& collectable : collectables) {
 		if (player->isOverlap(collectable) && collectable->received == false) { 
-			cout << "Obtenido una recolectable" << endl;
+			cout << "Obtenido un recolectable" << endl;
 
 			bool pInList = std::find(deleteCollectables.begin(),
 				deleteCollectables.end(),
@@ -175,23 +180,32 @@ void GameLayer::update() {
 		}
 	}
 
-
 	// Colisiones: PLAYER - TRAMPOLINE
 	for (auto const& trampoline : trampolines) {
 		if (player->isOverlap(trampoline)) {
 			int bajoPlayer = player->y + player->height / 2;
 			int trampolineAlto = trampoline->y - trampoline->height / 2;
-			cout << trampoline->state << endl;
 		
 			if (bajoPlayer >= trampoline->y) {
 				player->jumpTrampoline();
 				trampoline->impacted();
-				cout << trampoline->state << endl;
 			}
-
 		}
 	}
 
+	// Colisiones: PLAYER - DOOR
+	for (auto const& door : doors) {
+		if (player->isOverlap(door) && controlOpen) {		
+			if (!door->opened) {
+				door->open();
+				Door* destination = findDoorPair(door);
+				travelDoor(destination);
+			}
+			else {
+				cout << "Door is LOCKED" << endl;
+			}
+		}
+	}
 
 
 	// Colisiones: PLAYER - ENEMY
@@ -296,30 +310,47 @@ void GameLayer::update() {
 
 void GameLayer::calculateScroll() {
 	//Le damos un margen para que se actualice el mapa
-	// Límite izquierda
-	if (player->x > WIDTH * 0.3) {
-		if (player->x - scrollX < WIDTH * 0.3) {
-			scrollX = player->x - WIDTH * 0.3;
+	
+	if (doorOpened) {
+		for (auto const& door : doors) {
+			door->close();
 		}
-	}
-	// Límite derecha
-	if (player->x < mapWidth - WIDTH * 0.3) {
-		if (player->x - scrollX > WIDTH * 0.7) {
+
+		if(player->x < mapWidth)
 			scrollX = player->x - WIDTH * 0.7;
+
+		doorOpened = false;
+	} 
+	else {
+
+		// Límite izquierda
+		if (player->x > WIDTH * 0.3) {
+			if (player->x - scrollX < WIDTH * 0.3) {
+				scrollX = player->x - WIDTH * 0.3;
+			}
+		}
+		// Límite derecha
+		if (player->x < mapWidth - WIDTH * 0.3) {
+			if (player->x - scrollX > WIDTH * 0.7) {
+				scrollX = player->x - WIDTH * 0.7;
+			}
+		}
+		// Límite arriba
+		if (player->y > HEIGHT * 0.1) {
+			if (player->y - scrollY < HEIGHT * 0.1) {
+				scrollY = player->y - HEIGHT * 0.1;
+			}
+		}
+		// Límite abajo
+		if (player->y < mapWidth - HEIGHT * 0.3) {
+			if (player->y - scrollY > HEIGHT * 0.7) {
+				scrollY = player->y - HEIGHT * 0.7;
+			}
 		}
 	}
-	// Límite arriba
-	if (player->y > HEIGHT * 0.1) {
-		if (player->y - scrollY < HEIGHT * 0.1) {
-			scrollY = player->y - HEIGHT * 0.1;
-		}
-	}
-	// Límite abajo
-	if (player->y < mapWidth - HEIGHT * 0.3) {
-		if (player->y - scrollY > HEIGHT * 0.7) {
-			scrollY = player->y - HEIGHT * 0.7;
-		}
-	}
+	//if (player->x < mapWidth) {
+	//	scrollX = player->x - WIDTH;
+	//}
 }
 
 void GameLayer::draw() {
@@ -329,6 +360,10 @@ void GameLayer::draw() {
 
 	for (auto const& tile : tiles) {
 		tile->draw(scrollX, scrollY);
+	}
+
+	for (auto const& door : doors) {
+		door->draw(scrollX, scrollY);
 	}
 
 	for (auto const& projectile : projectiles) {
@@ -349,6 +384,8 @@ void GameLayer::draw() {
 	for (auto const& trampoline : trampolines) {
 		trampoline->draw(scrollX, scrollY);
 	}
+
+
 
 	//Set-up displays no se mueven con el scroll
 	backgroundPoints->draw();
@@ -371,9 +408,9 @@ void GameLayer::draw() {
 }
 
 void GameLayer::keysToControls(SDL_Event event) {
+	// Pulsada
 	if (event.type == SDL_KEYDOWN) {
 		int code = event.key.keysym.sym;
-		// Pulsada
 		switch (code) {
 		case SDLK_ESCAPE:
 			game->loopActive = false;
@@ -396,13 +433,15 @@ void GameLayer::keysToControls(SDL_Event event) {
 		case SDLK_SPACE: // dispara
 			controlShoot = true;
 			break;
+		case SDLK_RETURN: // abre puertas
+			controlOpen = true;
+			break;
 		}
-
-
 	}
+
+	// Levantada
 	if (event.type == SDL_KEYUP) {
 		int code = event.key.keysym.sym;
-		// Levantada
 		switch (code) {
 		case SDLK_d: // derecha
 			if (controlMoveX == 1) {
@@ -427,10 +466,11 @@ void GameLayer::keysToControls(SDL_Event event) {
 		case SDLK_SPACE: // dispara
 			controlShoot = false;
 			break;
+		case SDLK_RETURN: // abrir puerta
+			controlOpen = false;
+			break;
 		}
-
 	}
-
 }
 
 void GameLayer::loadMap(string name) {
@@ -535,6 +575,17 @@ void GameLayer::loadMapObject(char character, float x, float y)
 		space->addDynamicActor(trampoline);
 		break;
 	}
+	case '9': {
+		//Primero añadir tile
+		loadMapObject('.', x, y);
+
+		Door* door = new Door(x, y, game, 9);
+		// modificación para empezar a contar desde el suelo.
+		door->y = door->y - door->height / 2;
+		doors.push_back(door);
+		space->addDynamicActor(door);
+		break;
+	}
 	}
 }
 
@@ -597,3 +648,22 @@ void GameLayer::mouseToControls(SDL_Event event) {
 	}
 }
 
+void GameLayer::travelDoor(Door* destination) {
+	player->x = destination->x;
+	player->y = destination->y;
+	destination->opened = true; // Lock door
+	doorOpened = true;
+	draw();
+}
+
+Door* GameLayer::findDoorPair(Door* openedDoor) {
+	for (auto const& door : doors) {
+		if (openedDoor->numDoor == door->numDoor) {
+			if (door != openedDoor) {
+				return door;
+			}
+		}
+	}
+
+	return openedDoor;
+}

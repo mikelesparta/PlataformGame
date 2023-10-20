@@ -21,7 +21,6 @@ void Trampoline::update() {
 
 	if (state == game->stateMoving) {
 		animation = aMoving;
-		cout << "MOVIMIENTO" << endl;
 	}
 	
 	if (state == game->stateDying) {

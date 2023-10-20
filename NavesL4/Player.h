@@ -13,6 +13,7 @@ public:
 	void update();
 	void jump();
 	void jumpTrampoline();
+	void teletransport();
 
 	void moveX(float axis);
 	void moveY(float axis);

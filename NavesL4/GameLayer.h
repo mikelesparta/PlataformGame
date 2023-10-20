@@ -12,6 +12,7 @@
 #include "Pad.h"
 #include "Collectable.h"
 #include "Trampoline.h"
+#include "Door.h"
 
 #include <list>
 #include <fstream> // Leer ficheros
@@ -23,6 +24,7 @@ public:
 	GameLayer(Game* game);
 
 	void init() override;
+	void travelDoor(Door* door);
 	void processControls() override;
 	void update() override;
 	void draw() override;
@@ -31,6 +33,7 @@ public:
 	void loadMap(string name); // Carga el fichero del mapa
 	void loadMapObject(char character, float x, float y); //crea el mapa con el fcihero cargado
 	void calculateScroll();
+	Door* findDoorPair(Door* door);
 
 	Actor* message;
 	bool pause;
@@ -63,10 +66,13 @@ public:
 	list<Projectile*> projectiles;
 	list<Collectable*> collectables;
 	list<Trampoline*> trampolines;
+	list<Door*> doors;
 
 	Tile* cup; // Elemento de final de nivel
 
 	bool controlShoot = false;
+	bool controlOpen = false;
+	bool doorOpened = false;
 	int controlMoveY = 0;
 	int controlMoveX = 0;
 

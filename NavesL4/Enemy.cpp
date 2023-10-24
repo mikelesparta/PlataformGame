@@ -1,14 +1,14 @@
 #include "Enemy.h"
 
 Enemy::Enemy(float x, float y, Game* game)
-	: Actor("res/enemigo.png", x, y, 36, 40, game) {
+	: Actor(ICONO_ENEMIGO, x, y, 36, 40, game) {
 
 	state = game->stateMoving;
 
-	aDying = new Animation("res/enemigo_morir.png", width, height,
+	aDying = new Animation(ENEMIGO_MORIR, width, height,
 		280, 40, 6, 8, false, game); //animación finita
 
-	aMoving = new Animation("res/enemigo_movimiento.png", width, height,
+	aMoving = new Animation(ENEMIGO_MOV, width, height,
 		108, 40, 6, 3, true, game);
 
 	animation = aMoving;

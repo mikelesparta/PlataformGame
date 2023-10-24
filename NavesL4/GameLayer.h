@@ -35,6 +35,7 @@ public:
 	void loadMap(string name); // Carga el fichero del mapa
 	void loadMapObject(char character, float x, float y); //crea el mapa con el fcihero cargado
 	void calculateScroll();
+	void addDoor(Door* door);
 	Door* findDoorPair(Door* door);
 
 	Actor* message;

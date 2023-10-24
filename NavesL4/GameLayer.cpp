@@ -592,10 +592,7 @@ void GameLayer::loadMapObject(char character, float x, float y)
 		loadMapObject('.', x, y);
 
 		Door* door = new Door(x, y, game, 9);
-		// modificación para empezar a contar desde el suelo.
-		door->y = door->y - door->height / 2;
-		doors.push_back(door);
-		space->addDynamicActor(door);
+		addDoor(door);
 		break;
 	}
 	case '8': {
@@ -603,10 +600,7 @@ void GameLayer::loadMapObject(char character, float x, float y)
 		loadMapObject('.', x, y);
 
 		Door* door = new Door(x, y, game, 8);
-		// modificación para empezar a contar desde el suelo.
-		door->y = door->y - door->height / 2;
-		doors.push_back(door);
-		space->addDynamicActor(door);
+		addDoor(door);
 		break;
 	}
 	case '7': {
@@ -614,13 +608,33 @@ void GameLayer::loadMapObject(char character, float x, float y)
 		loadMapObject('.', x, y);
 
 		Door* door = new Door(x, y, game, 7);
-		// modificación para empezar a contar desde el suelo.
-		door->y = door->y - door->height / 2;
-		doors.push_back(door);
-		space->addDynamicActor(door);
+		addDoor(door);
+		break;
+	}
+	case '5': {
+		//Primero añadir tile
+		loadMapObject('.', x, y);
+
+		Door* door = new Door(x, y, game, 5);
+		addDoor(door);
+		break;
+	}
+	case '4': {
+		//Primero añadir tile
+		loadMapObject('.', x, y);
+
+		Door* door = new Door(x, y, game, 4);
+		addDoor(door);
 		break;
 	}
 	}
+}
+
+void GameLayer::addDoor(Door* door) {
+	// modificación para empezar a contar desde el suelo.
+	door->y = door->y - door->height / 2;
+	doors.push_back(door);
+	space->addDynamicActor(door);
 }
 
 void GameLayer::mouseToControls(SDL_Event event) {

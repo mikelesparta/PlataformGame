@@ -149,11 +149,12 @@ Projectile* Player::shoot() {
 	}
 }
 
-void Player::loseLife() {
+void Player::loseLife(list<Actor*> &backgroungHearts) {
 	if (invulnerableTime <= 0) {
 		if (lifes > 0) {
 			lifes--;
 			invulnerableTime = 100;	// 100 actualizaciones 
+			backgroungHearts.pop_front();
 		}
 	}
 }

@@ -214,32 +214,28 @@ void GameLayer::update() {
 	// Colisiones: PLAYER - ENEMY
 	for (auto const& enemy : enemies) {
 		if (player->isOverlap(enemy)) {
-
-			//DISTINTO DE MURIENDO Y MUERTO
+						
+			//Distinto de muriendo y muerto
 			if (enemy->state != game->stateDying && enemy->state != game->stateDead) {
-				int bajoPlayer = player->y + player->height / 2;
-				int enemyAlto = enemy->y - enemy->height / 2;
+				// MONSTRUOS
+				if (enemy->icon == ICONO_ENEMIGO2) {
+					int bajoPlayer = player->y + player->height / 2;
+					int enemyAlto = enemy->y - enemy->height / 2;
 
-				if (bajoPlayer >= enemy->y) {
-					//player->loseLife();
-
-					
-					if (player->invulnerableTime <= 0) {
-						if (player->lifes > 0) {
-							player->lifes--;
-							player->invulnerableTime = 100;	// 100 actualizaciones 
-							backgroungHearts.pop_front();
-						}
+					if (bajoPlayer >= enemy->y) {
+						player->loseLife(backgroungHearts);
 					}
-
-					cout << "VIDAS" << endl;
-					cout << player->lifes << endl;
+					else { // Saltar encima de los monstruos
+						enemy->impacted();
+						player->vy = -5; // Jugador bota
+					}
 				}
+				// ALIENS
+				// No podemos saltar encima de ellos para derrotarlos
 				else {
-					enemy->impacted();
-					player->vy = -5; // Jugador bota
+					player->loseLife(backgroungHearts);					
 				}
-			}
+			} 			
 
 			if (player->lifes <= 0) {
 				init();
@@ -286,8 +282,6 @@ void GameLayer::update() {
 
 	for (auto const& enemy : enemies) {
 		if (enemy->state == game->stateDead) {
-			cout << "ESTADO MUERTO" << endl;
-
 			bool eInList = std::find(deleteEnemies.begin(),
 				deleteEnemies.end(),
 				enemy) != deleteEnemies.end();
@@ -526,19 +520,22 @@ void GameLayer::loadMapObject(char character, float x, float y)
 		space->addDynamicActor(cup); // Realmente no hace falta
 		break;
 	}
-	//case '.': {
-	//	Tile* tile = new Tile("res/bloque_fondo_muro.png", x, y, game);
-	//	// modificación para empezar a contar desde el suelo.
-	//	tile->y = tile->y - tile->height / 2;
-	//	tiles.push_back(tile);
-	//	// NO SE AÑADE AL SPACE FISICO 
-	//	break;
-	//}
 	case 'E': {
 		// Primero añadir Tile - Fondo en la misma posición
 		loadMapObject('.', x, y);
 
-		Enemy* enemy = new Enemy(x, y, game);
+		Enemy* enemy = new Spaceship(ICONO_ENEMIGO, x, y, 36, 40, game);
+		// modificación para empezar a contar desde el suelo.
+		enemy->y = enemy->y - enemy->height / 2;
+		enemies.push_back(enemy);
+		space->addDynamicActor(enemy);
+		break;
+	}
+	case 'e': {
+		// Primero añadir Tile - Fondo en la misma posición
+		loadMapObject('.', x, y);
+
+		Enemy* enemy = new Monster(ICONO_ENEMIGO2, x, y, 36, 29, game);
 		// modificación para empezar a contar desde el suelo.
 		enemy->y = enemy->y - enemy->height / 2;
 		enemies.push_back(enemy);

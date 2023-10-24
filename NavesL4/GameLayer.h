@@ -13,6 +13,8 @@
 #include "Collectable.h"
 #include "Trampoline.h"
 #include "Door.h"
+#include "Spaceship.h"
+#include "Monster.h"
 
 #include <list>
 #include <fstream> // Leer ficheros

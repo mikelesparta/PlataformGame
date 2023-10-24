@@ -171,10 +171,12 @@
     <ClCompile Include="Layer.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MenuLayer.cpp" />
+    <ClCompile Include="Monster.cpp" />
     <ClCompile Include="Pad.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Projectile.cpp" />
     <ClCompile Include="Space.cpp" />
+    <ClCompile Include="Spaceship.cpp" />
     <ClCompile Include="Text.cpp" />
     <ClCompile Include="Tile.cpp" />
     <ClCompile Include="Trampoline.cpp" />
@@ -191,10 +193,12 @@
     <ClInclude Include="GameLayer.h" />
     <ClInclude Include="Layer.h" />
     <ClInclude Include="MenuLayer.h" />
+    <ClInclude Include="Monster.h" />
     <ClInclude Include="Pad.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Projectile.h" />
     <ClInclude Include="Space.h" />
+    <ClInclude Include="Spaceship.h" />
     <ClInclude Include="Text.h" />
     <ClInclude Include="Tile.h" />
     <ClInclude Include="Trampoline.h" />

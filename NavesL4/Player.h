@@ -5,6 +5,8 @@
 #include "Audio.h"
 #include "Animation.h" // incluir animacion 
 
+#include <list>
+
 class Player : public Actor
 {
 public:
@@ -18,7 +20,7 @@ public:
 	void moveX(float axis);
 	void moveY(float axis);
 	void draw(float scrollX = 0, float scrollY = 0) override; // Va a sobrescribir
-	void loseLife();
+	void loseLife(list<Actor*> &backgroungHearts);
 
 	int lifes = 3;
 	int invulnerableTime = 0;

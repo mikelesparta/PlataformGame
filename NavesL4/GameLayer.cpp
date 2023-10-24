@@ -37,6 +37,9 @@ void GameLayer::init() {
 		WIDTH * 0.85, HEIGHT * 0.05, 24, 24, game);
 	backgroundCollectables = new Actor("res/icono_recolectable_mini.png",
 		WIDTH * 0.75, HEIGHT * 0.05, 24, 24, game);
+	backgroungHearts.push_back(new Actor(HEART_ICON, WIDTH * 0.53, HEIGHT * 0.06, 24, 20, game));
+	backgroungHearts.push_back(new Actor(HEART_ICON, WIDTH * 0.6, HEIGHT * 0.06, 24, 20, game));
+	backgroungHearts.push_back(new Actor(HEART_ICON, WIDTH * 0.67, HEIGHT * 0.06, 24, 20, game));
 
 	enemies.clear(); 
 	projectiles.clear(); 
@@ -218,13 +221,23 @@ void GameLayer::update() {
 				int enemyAlto = enemy->y - enemy->height / 2;
 
 				if (bajoPlayer >= enemy->y) {
-					player->loseLife();
+					//player->loseLife();
+
+					
+					if (player->invulnerableTime <= 0) {
+						if (player->lifes > 0) {
+							player->lifes--;
+							player->invulnerableTime = 100;	// 100 actualizaciones 
+							backgroungHearts.pop_front();
+						}
+					}
+
 					cout << "VIDAS" << endl;
 					cout << player->lifes << endl;
 				}
 				else {
 					enemy->impacted();
-					player->vy = -5;
+					player->vy = -5; // Jugador bota
 				}
 			}
 
@@ -312,12 +325,12 @@ void GameLayer::calculateScroll() {
 	//Le damos un margen para que se actualice el mapa
 	
 	if (doorOpened) {
-		for (auto const& door : doors) {
-			door->close();
-		}
-
-		if(player->x < mapWidth)
+		if (player->x < mapWidth) {
 			scrollX = player->x - WIDTH * 0.7;
+		}
+		if (player->x > mapWidth){
+			scrollX = player->x - WIDTH * 0.3;
+		}
 
 		doorOpened = false;
 	} 
@@ -348,9 +361,6 @@ void GameLayer::calculateScroll() {
 			}
 		}
 	}
-	//if (player->x < mapWidth) {
-	//	scrollX = player->x - WIDTH;
-	//}
 }
 
 void GameLayer::draw() {
@@ -385,7 +395,9 @@ void GameLayer::draw() {
 		trampoline->draw(scrollX, scrollY);
 	}
 
-
+	for (auto const& heart : backgroungHearts) {
+		heart->draw();
+	}
 
 	//Set-up displays no se mueven con el scroll
 	backgroundPoints->draw();
@@ -586,6 +598,28 @@ void GameLayer::loadMapObject(char character, float x, float y)
 		space->addDynamicActor(door);
 		break;
 	}
+	case '8': {
+		//Primero añadir tile
+		loadMapObject('.', x, y);
+
+		Door* door = new Door(x, y, game, 8);
+		// modificación para empezar a contar desde el suelo.
+		door->y = door->y - door->height / 2;
+		doors.push_back(door);
+		space->addDynamicActor(door);
+		break;
+	}
+	case '7': {
+		//Primero añadir tile
+		loadMapObject('.', x, y);
+
+		Door* door = new Door(x, y, game, 7);
+		// modificación para empezar a contar desde el suelo.
+		door->y = door->y - door->height / 2;
+		doors.push_back(door);
+		space->addDynamicActor(door);
+		break;
+	}
 	}
 }
 
@@ -653,7 +687,14 @@ void GameLayer::travelDoor(Door* destination) {
 	player->y = destination->y;
 	destination->opened = true; // Lock door
 	doorOpened = true;
-	draw();
+	
+	for (auto const& door : doors) {
+		if (door->numDoor == destination->numDoor) {
+			door->close();
+		}
+	}
+
+	draw();	
 }
 
 Door* GameLayer::findDoorPair(Door* openedDoor) {

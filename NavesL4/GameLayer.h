@@ -18,6 +18,8 @@
 #include <fstream> // Leer ficheros
 #include <sstream> // Leer líneas / String
 
+#define HEART_ICON "res/corazon.png"
+
 class GameLayer : public Layer
 {
 public:
@@ -67,6 +69,8 @@ public:
 	list<Collectable*> collectables;
 	list<Trampoline*> trampolines;
 	list<Door*> doors;
+	list<Actor*> backgroungHearts;
+
 
 	Tile* cup; // Elemento de final de nivel
 

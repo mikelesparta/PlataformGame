@@ -21,12 +21,10 @@ void Collectable::update() {
 	if (state == game->stateMoving) {
 		animation = aMoving;
 	}
-
-	// Establecer velocidad
-	vx = 0;
+	
+	vx = 0; // establecer velocidad
 	vy = -1; // contrarestar la gravedad
 }
-
 
 void Collectable::draw(float scrollX, float scrollY) {
 	animation->draw(x - scrollX, y-scrollY);

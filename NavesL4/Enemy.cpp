@@ -2,7 +2,6 @@
 
 Enemy::Enemy(string filename, float x, float y, int widthIcon, int heightIcon, Game* game)
 	: Actor(filename, x, y, widthIcon, heightIcon, game) {
-	icon = filename;
 }
 
 void Enemy::update() {
@@ -46,8 +45,6 @@ void Enemy::update() {
 			}
 			vx = vxIntelligence;
 		}
-
-
 	}
 	else {
 		vx = 0;

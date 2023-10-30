@@ -16,9 +16,6 @@ Trampoline::Trampoline(float x, float y, Game* game)
 }
 
 void Trampoline::update() {
-	// Actualizar la animación
-	bool endAnimation = animation->update();
-
 	if (state == game->stateMoving) {
 		animation = aMoving;
 	}
@@ -29,7 +26,6 @@ void Trampoline::update() {
 
 	state = game->stateDying;
 }
-
 
 void Trampoline::draw(float scrollX, float scrollY) {
 	animation->draw(x - scrollX, y - scrollY);

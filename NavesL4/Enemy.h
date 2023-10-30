@@ -21,7 +21,7 @@ public:
 	virtual void update();
 	virtual void impacted(); // Recibe impacto y pone animación de morir
 	
-	string icon;
+	bool jumpDamage;
 	int state;
 	float vxIntelligence; //velocidad que de verdad tiene que no toca el motor de fuerzas físicas
 

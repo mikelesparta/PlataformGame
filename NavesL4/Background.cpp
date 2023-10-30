@@ -2,7 +2,6 @@
 
 Background::Background(string filename, float x, float y, Game* game)
 	: Actor(filename, x, y, WIDTH, HEIGHT, game) {
-
 }
 
 Background::Background(string filename, float x, float y, float vx, Game* game)
@@ -48,6 +47,5 @@ void Background::draw(float scrollX, float scrollY) {
 		}
 		backgroundAux->draw();
 	}
-
 }
 

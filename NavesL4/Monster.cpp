@@ -4,14 +4,14 @@
 #include "Enemy.h"
 #include "Actor.h"
 
-Monster::Monster(string filename, float x, float y, int widthIcon, int heightIcon, Game* game)
+Monster::Monster(float x, float y, int widthIcon, int heightIcon, Game* game)
 	: Enemy(ICONO_ENEMIGO2, x, y, 36, 40, game) {
 
 	state = game->stateMoving;
+	jumpDamage = true;
 
 	aDying = new Animation(ENEMIGO2_MORIR, width, height,
 		36, 36, 6, 1, false, game); //animación finita
-
 	aMoving = new Animation(ENEMIGO2_MOV, width, height,
 		274, 29, 6, 5, true, game);
 

@@ -74,7 +74,6 @@ public:
 	list<Door*> doors;
 	list<Actor*> backgroungHearts;
 
-
 	Tile* cup; // Elemento de final de nivel
 
 	bool controlShoot = false;
@@ -82,7 +81,5 @@ public:
 	bool doorOpened = false;
 	int controlMoveY = 0;
 	int controlMoveX = 0;
-
-
 };
 

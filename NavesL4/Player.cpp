@@ -125,6 +125,7 @@ void Player::jumpTrampoline() {
 		onAir = true;
 	}
 }
+
 Projectile* Player::shoot() {
 
 	if (shootTime == 0) {

@@ -28,7 +28,6 @@ Game::Game() {
 	loop();
 }
 
-
 void Game::loop() {
 	int initTick; // ms de inicio loop
 	int endTick; // ms de fin de loop
@@ -78,7 +77,6 @@ void Game::scale() {
 		// Cambiar escala del render
 		SDL_RenderSetScale(renderer, 1, 1);
 	}
-
 }
 
 SDL_Texture* Game::getTexture(string filename) {
@@ -94,12 +92,3 @@ SDL_Texture* Game::getTexture(string filename) {
 
 	return mapTextures[filename];
 }
-
-
-
-
-
-
-
-
-

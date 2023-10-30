@@ -21,4 +21,3 @@ public:
 	Animation* aMoving;
 	Animation* animation;
 };
-

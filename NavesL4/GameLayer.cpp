@@ -210,15 +210,13 @@ void GameLayer::update() {
 		}
 	}
 
-
 	// Colisiones: PLAYER - ENEMY
 	for (auto const& enemy : enemies) {
 		if (player->isOverlap(enemy)) {
 						
 			//Distinto de muriendo y muerto
 			if (enemy->state != game->stateDying && enemy->state != game->stateDead) {
-				// MONSTRUOS
-				if (enemy->icon == ICONO_ENEMIGO2) {
+				if (enemy->jumpDamage) { // MONSTRUOS
 					int bajoPlayer = player->y + player->height / 2;
 					int enemyAlto = enemy->y - enemy->height / 2;
 
@@ -230,9 +228,7 @@ void GameLayer::update() {
 						player->vy = -5; // Jugador bota
 					}
 				}
-				// ALIENS
-				// No podemos saltar encima de ellos para derrotarlos
-				else {
+				else { // ALIENS
 					player->loseLife(backgroungHearts);					
 				}
 			} 			
@@ -524,7 +520,7 @@ void GameLayer::loadMapObject(char character, float x, float y)
 		// Primero añadir Tile - Fondo en la misma posición
 		loadMapObject('.', x, y);
 
-		Enemy* enemy = new Spaceship(ICONO_ENEMIGO, x, y, 36, 40, game);
+		Enemy* enemy = new Spaceship(x, y, 36, 40, game);
 		// modificación para empezar a contar desde el suelo.
 		enemy->y = enemy->y - enemy->height / 2;
 		enemies.push_back(enemy);
@@ -532,11 +528,9 @@ void GameLayer::loadMapObject(char character, float x, float y)
 		break;
 	}
 	case 'e': {
-		// Primero añadir Tile - Fondo en la misma posición
 		loadMapObject('.', x, y);
 
-		Enemy* enemy = new Monster(ICONO_ENEMIGO2, x, y, 36, 29, game);
-		// modificación para empezar a contar desde el suelo.
+		Enemy* enemy = new Monster(x, y, 36, 29, game);
 		enemy->y = enemy->y - enemy->height / 2;
 		enemies.push_back(enemy);
 		space->addDynamicActor(enemy);
@@ -563,11 +557,9 @@ void GameLayer::loadMapObject(char character, float x, float y)
 		break;
 	}
 	case 'R': {
-		//Primero añadir tile
 		loadMapObject('.', x, y);
 
 		Collectable* collectable = new Collectable(x, y, game);
-		// modificación para empezar a contar desde el suelo.
 		collectable->y = collectable->y - collectable->height / 2;
 		collectables.push_back(collectable);
 		space->addDynamicActor(collectable);

@@ -1,6 +1,5 @@
 #include "Door.h"
 
-
 Door::Door(float x, float y, Game* game, int num)
 	: Actor("res/puerta.png", x, y, 35, 58, game) {
 
@@ -35,11 +34,8 @@ void Door::update() {
 
 	if (state == game->stateDying) {
 		animation = aDying;
-	}
-
-	
+	}	
 }
-
 
 void Door::draw(float scrollX, float scrollY) {
 	animation->draw(x - scrollX, y - scrollY);
